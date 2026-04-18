@@ -1,26 +1,92 @@
-MIT License
+# OECD社会支出データベース インタラクティブ・エクスプローラ
 
-Copyright (c) 2026 Shintaro Kurachi
+OECD Social Expenditure Database (SOCX) を日本語で操作できるインタラクティブな可視化ツールです。14カ国の社会支出（対GDP比）を分野別・年次別・給付形態別（現金給付/現物給付）に比較・分析できます。
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+## 機能
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+- **📊 国別比較**: 9分野の社会支出を積み上げ棒グラフで国際比較
+- **📈 時系列推移**: 2005〜2021年の各国のトレンドを比較
+- **🕸️ レーダーチャート**: 各国の福祉供給構造の「形」を可視化
+- **💰 現金vs現物**: 現金給付と現物給付の構成比を比較し、福祉レジームの違いを分析
+- **📋 データ表 + Excelダウンロード**: 選択した国・年次のデータを3シート構成のxlsxファイルとして出力
 
-Note: This license applies to the code only. The underlying social expenditure
-data is sourced from the OECD Social Expenditure Database (SOCX) and is subject
-to OECD's Terms and Conditions. Users must cite OECD as the data source when
-reusing or publishing results based on this tool.
+## 収録国
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+日本、デンマーク、スウェーデン、フィンランド、ノルウェー、フランス、ドイツ、イギリス、アメリカ、韓国、イタリア、カナダ、オランダ、OECD平均
+
+## 使い方
+
+### ブラウザで開く
+
+`index.html` をそのままブラウザで開けば動作します。ビルドやインストールは不要です。
+
+### GitHub Pagesで公開する
+
+1. このリポジトリをフォーク
+2. リポジトリの Settings → Pages
+3. Source を `main` ブランチの `/ (root)` に設定
+4. `https://<username>.github.io/<repo-name>/` でアクセス可能
+
+### ローカルで試す
+
+```bash
+python3 -m http.server 8000
+# ブラウザで http://localhost:8000 を開く
+```
+
+## データについて
+
+データは [OECD Data Explorer](https://data-explorer.oecd.org) の Social expenditure aggregates (DSD_SOCX_AGG) データセットから抽出した実数値です。指標は「公的社会支出（Public Social Expenditure）の対GDP比（%）」。
+
+分類はOECD SOCXの9分野区分（高齢、遺族、障害・業務災害・傷病、保健、家族、積極的労働市場政策、失業、住宅、その他）に準拠しています。
+
+現金給付（cash benefits）と現物給付（benefits in kind）の区分はSOCXの spending type 分類に基づく実数値で、分野によっては片方のみが存在します（例: 保健は全額現物、失業はほぼ全額現金、ALMPは内訳区分なし）。
+
+## 免責事項（Disclaimer）
+
+本ツールは研究・教育上の参考資料として個人の責任において公開するものであり、いかなる公的機関・学術機関を代表するものではありません。ご利用にあたっては以下の点にご留意ください。
+
+**データの正確性について**  
+収録データはOECD.Statから抽出した時点（2026年4月）の公表値に基づいています。OECDは随時データを改訂するため、本ツールの数値が最新の公式値と一致しない場合があります。厳密な分析・引用・政策提言には、必ず[OECD公式データベース](https://www.oecd.org/social/expenditure.htm)から最新データを直接ご確認ください。本ツールの数値を直接の根拠とした意思決定・論文執筆等に起因するいかなる損害についても、作成者は責任を負いません。
+
+**データ加工について**  
+対GDP比の算定方法、分類基準、各国のデータ報告範囲はOECDの定義に準拠しますが、本ツールは可視化の都合上、年次を5時点に限定し、一部項目を簡略表示しています。欠損値（null）は「—」として表示され、合計値には加算されません。データの範囲や性質について正確に理解した上でご利用ください。
+
+**ツールの性質について**  
+本ツールは非公式の可視化プロトタイプであり、機関の公式見解を示すものではありません。動作の継続性・将来の更新・バグ対応は保証されません。ブラウザ環境やネットワーク状況により正常に表示されない場合があります。
+
+**引用について**  
+本ツール経由で取得したデータを論文・報告書等で引用する場合は、OECDのSocial Expenditure Database (SOCX)を一次出典として明記してください:
+
+> Source: OECD, Social Expenditure Database (SOCX), https://www.oecd.org/social/expenditure.htm
+
+本ツール自体への言及は任意ですが、引用される場合は以下の形式を推奨します:
+
+> 倉地真太郎 (2026)「OECD社会支出データベース インタラクティブ・エクスプローラ」 https://github.com/shintarokurachi/[repo-name]
+
+## データ更新
+
+OECD.Statから最新データをダウンロードして差し替える場合、`index.html` 内の `RAW_DATA` 定数を置き換えてください。各国・各年のデータは `{t: [9values], c: [9values], k: [9values]}` の形式で、配列の順序は `CATEGORIES` と一致させる必要があります。
+
+## 技術スタック
+
+- React 18 (CDN経由、ビルド不要)
+- Recharts 2.15 (チャート描画)
+- SheetJS 0.18 (xlsxエクスポート)
+- Babel Standalone (ブラウザ内JSXトランスパイル)
+
+## ライセンス
+
+### コード
+
+MIT License — 自由に利用・改変・再配布できます。詳細は [LICENSE](./LICENSE) を参照してください。
+
+### データ
+
+OECD Terms and Conditions に準拠。OECDデータの再利用には出典の明示が必要です。
+
+## 作者
+
+倉地真太郎 (Shintaro Kurachi) — 明治大学政治経済学部准教授／Roskilde University Visiting Researcher
+
+Built collaboratively with Claude (Anthropic).
